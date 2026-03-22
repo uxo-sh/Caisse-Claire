@@ -1,0 +1,57 @@
+caisse-claire/
+├── .git/                     # Dossier caché de Git
+├── .gitignore                # Indispensable pour C# ! Il ignorera les dossiers 'bin', 'obj', etc.
+├── README.md                 # Description du projet, comment le lancer, etc.
+├── LICENSE                   # La licence de ton code
+├── docs/                     # Documentation additionnelle (spécifications, diagrammes, etc.)
+│   ├── features.md
+│   └── architecture.md
+├── src/                      # Le cœur de ton application, avec tous les projets C#
+│   ├── CaisseClaire.sln      # Le fichier solution de Visual Studio, qui regroupe tous tes projets.
+│   ├── CaisseClaire.UI/      # Le projet pour l'interface utilisateur (ex: WPF, WinForms, UWP)
+│   │   ├── App.xaml          # (WPF) Point d'entrée de l'application
+│   │   ├── App.xaml.cs       # (WPF) Code-behind de l'application
+│   │   ├── MainWindow.xaml   # (WPF) Fenêtre principale de l'application
+│   │   ├── MainWindow.xaml.cs# (WPF) Code-behind de la fenêtre principale
+│   │   ├── Views/            # Dossier pour les autres vues/fenêtres de ton UI
+│   │   │   └── TransactionView.xaml
+│   │   ├── ViewModels/       # (Si tu utilises MVVM) Classes pour la logique de présentation
+│   │   │   └── MainViewModel.cs
+│   │   ├── Properties/       # Fichiers de propriétés du projet (ex: AssemblyInfo.cs)
+│   │   ├── Resources/        # Ressources spécifiques à l'UI (images, icônes)
+│   │   ├── CaisseClaire.UI.csproj # Le fichier projet C# pour l'UI
+│   │   └── App.config        # Fichier de configuration de l'application
+│   ├── CaisseClaire.Core/    # Le projet pour la logique métier (business logic). Indépendant de l'UI.
+│   │   ├── Models/           # Classes représentant tes entités (Produit, Transaction, Client, etc.)
+│   │   │   ├── Product.cs
+│   │   │   └── Transaction.cs
+│   │   ├── Services/         # Classes pour les opérations métier (calculs, validation, etc.)
+│   │   │   └── CashRegisterService.cs
+│   │   ├── Interfaces/       # Interfaces pour la logique métier (si tu utilises l'injection de dépendances)
+│   │   │   └── ICashRegisterService.cs
+│   │   ├── Exceptions/       # Classes d'exceptions personnalisées
+│   │   ├── CaisseClaire.Core.csproj # Le fichier projet C# pour la logique métier
+│   │   └── Properties/
+│   ├── CaisseClaire.Data/    # Le projet pour l'accès aux données (base de données, fichiers, API)
+│   │   ├── Context/          # (Si tu utilises Entity Framework) Le DbContext
+│   │   │   └── CaisseClaireDbContext.cs
+│   │   ├── Repositories/     # Classes pour interagir avec ta source de données (CRUD)
+│   │   │   ├── ProductRepository.cs
+│   │   │   └── IProductRepository.cs
+│   │   ├── Entities/         # Classes qui mappent tes tables de base de données (si différentes des Models du Core)
+│   │   │   └── ProductEntity.cs
+│   │   ├── Migrations/       # (Si tu utilises Entity Framework Code First) Dossier pour les migrations
+│   │   ├── CaisseClaire.Data.csproj # Le fichier projet C# pour l'accès aux données
+│   │   └── App.config
+├── tests/                    # Dossier pour tes projets de tests
+│   ├── CaisseClaire.Core.Tests/    # Projet de tests unitaires pour la logique métier (Core)
+│   │   ├── CaisseClaire.Core.Tests.csproj
+│   │   └── Services/
+│   │       └── CashRegisterServiceTests.cs
+│   ├── CaisseClaire.Data.Tests/    # Projet de tests pour la couche d'accès aux données
+│   │   └── CaisseClaire.Data.Tests.csproj
+│   └── CaisseClaire.UITests/       # (Optionnel) Projet de tests d'interface utilisateur (ex: avec Selenium, Coded UI)
+│       └── CaisseClaire.UITests.csproj
+└── assets/                   # Ressources non-code (icônes d'app, images, fichiers de configuration par défaut)
+    ├── app_icon.ico
+    └── default_settings.json
