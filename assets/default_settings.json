@@ -1,0 +1,13 @@
+{
+  "Anthropic": {
+    "ApiKey": "YOUR_API_KEY",
+    "Model": "claude-sonnet-4-20250514"
+  },
+  "Bot": {
+    "MaxRetries": 3,
+    "ToolRegistryPath": "./tools"
+  },
+  "Logging": {
+    "MinimumLevel": "Information"
+  }
+}
