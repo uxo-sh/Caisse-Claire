@@ -1,0 +1,22 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Directive/">
+    <Project Path="src/Directive/CaisseClaire.Directive.csproj" />
+  </Folder>
+  <Folder Name="/src/Execution/">
+    <Project Path="src/Execution/CaisseClaire.Execution.csproj" />
+  </Folder>
+  <Folder Name="/src/Orchestration/">
+    <Project Path="src/Orchestration/CaisseClaire.Orchestration.csproj" />
+  </Folder>
+  <Folder Name="/tests/" />
+  <Folder Name="/tests/Directive.Tests/">
+    <Project Path="tests/Directive.Tests/CaisseClaire.Directive.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Execution.Tests/">
+    <Project Path="tests/Execution.Tests/CaisseClaire.Execution.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Orchestration.Tests/">
+    <Project Path="tests/Orchestration.Tests/CaisseClaire.Orchestration.Tests.csproj" />
+  </Folder>
+</Solution>

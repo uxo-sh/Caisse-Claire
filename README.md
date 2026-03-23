@@ -1,260 +1,154 @@
-# 🤖 WinArchBot — AI Chatbot for Windows Application Architecture
+# Windows Application — Project Blueprint
 
-> An intelligent assistant that understands, explains, and applies the **3-Layer Architecture** for building Windows applications — powered by a structured AI reasoning pipeline.
+> **How to use this file:** Hand this README to any AI chatbot (Claude, ChatGPT, Copilot, etc.) and ask it to initialize the project. The AI will use this document as its source of truth for architecture decisions, folder structure, and coding rules.
 
 ---
 
-## 📐 Architecture Overview
+## 🎯 Project Goal
 
-WinArchBot is built on a **3-layer cognitive architecture** that mirrors how a professional software engineer thinks when designing Windows applications. Each layer has a clear responsibility and feeds into the next.
+Build a **Windows desktop application** following a strict 3-layer architecture. Every feature, module, and file must respect the layer boundaries described below.
+
+---
+
+## 🏗️ 3-Layer Architecture
+
+The application is organized into 3 layers. Each layer has one responsibility. Layers only communicate downward — upper layers call lower layers, never the reverse.
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│              USER / WINDOWS APPLICATION              │
+│                     USER INPUT                       │
 └──────────────────────┬──────────────────────────────┘
                        │
           ┌────────────▼────────────┐
-          │   LAYER 1 — DIRECTIVE   │  ← What to do
-          │   (Intent & Goals)      │
+          │   LAYER 1 — DIRECTIVE   │
+          │      "What to do"       │
           └────────────┬────────────┘
                        │
           ┌────────────▼────────────┐
-          │ LAYER 2 — ORCHESTRATION │  ← Decision-making
-          │   (Planning & Routing)  │
+          │ LAYER 2 — ORCHESTRATION │
+          │       "Decisions"       │
           └────────────┬────────────┘
                        │
           ┌────────────▼────────────┐
-          │   LAYER 3 — EXECUTION   │  ← Doing the work
-          │   (Tools & Actions)     │
+          │   LAYER 3 — EXECUTION   │
+          │    "Doing the work"     │
           └─────────────────────────┘
 ```
 
 ---
 
-## 🗂️ Layer Descriptions
-
 ### Layer 1 — Directive *(What to do)*
 
-The **Directive Layer** is responsible for capturing and clarifying intent. It translates raw user input into structured, actionable goals.
+**Role:** Capture the user's intent and translate it into a clear, structured instruction.
 
-**Responsibilities:**
-- Parse natural language requests from the Windows UI
-- Define the objective clearly (e.g., "Create a new window form", "Fetch user data", "Generate a report")
-- Set constraints and expected outcomes
-- Forward a structured goal to the Orchestration layer
+- Receives raw input from the UI (button clicks, form submissions, commands)
+- Validates and interprets what the user wants
+- Produces a structured goal/command object
+- Passes it down to the Orchestration layer
+- **Does NOT make decisions. Does NOT execute anything.**
 
-**Key Concepts:**
-- Intent extraction
-- Goal decomposition
-- Input validation and clarification
-- Priority setting
-
-```
-User Input: "Show me the latest sales report filtered by region"
-      ↓
-Directive Output: {
-  action: "generate_report",
-  filters: { type: "sales", dimension: "region" },
-  output_format: "table + chart"
-}
-```
+**Lives in:** `src/Directive/`
 
 ---
 
 ### Layer 2 — Orchestration *(Decisions)*
 
-The **Orchestration Layer** acts as the brain. It receives structured goals and decides *how* to achieve them — which tools to use, in what order, and how to handle failures.
+**Role:** Receive the structured goal and decide how to achieve it.
 
-**Responsibilities:**
-- Select the right tools, APIs, or sub-agents for the task
-- Plan multi-step workflows
-- Handle conditional logic and branching decisions
-- Monitor execution status and retry on failure
-- Coordinate between parallel or sequential tasks
+- Breaks the goal into steps
+- Chooses which services, tools, or handlers to call
+- Manages the sequence and conditions (if/else, retries, branching)
+- Handles errors and fallback strategies
+- **Does NOT touch the UI. Does NOT run low-level operations directly.**
 
-**Key Concepts:**
-- Task planning and sequencing
-- Tool routing and selection
-- Error recovery and fallback strategies
-- State management across steps
-
-```
-Goal: generate_report (sales, by region)
-      ↓
-Plan:
-  Step 1 → Query database tool (sales data)
-  Step 2 → Filter by region tool
-  Step 3 → Render chart tool
-  Step 4 → Format output tool
-```
+**Lives in:** `src/Orchestration/`
 
 ---
 
 ### Layer 3 — Execution *(Doing the work)*
 
-The **Execution Layer** carries out the actual operations. It interfaces directly with Windows APIs, databases, file systems, UI components, and external services.
+**Role:** Carry out the actual operations — file system, database, APIs, Windows system calls.
 
-**Responsibilities:**
-- Run system-level operations (file I/O, registry, processes)
-- Interact with Windows UI components (WinForms, WPF, WinUI)
-- Call external APIs and databases
-- Return structured results back up to the Orchestration layer
-- Log all actions for traceability
+- Performs all I/O operations (read/write files, query DB, call REST APIs)
+- Interacts with Windows APIs (Win32, .NET runtime, registry, processes)
+- Returns results back up to the Orchestration layer
+- **Does NOT interpret intent. Does NOT make decisions.**
 
-**Key Concepts:**
-- Tool invocation and API calls
-- Windows system integration (Win32, .NET, COM)
-- Result formatting and error surfacing
-- Atomic, idempotent operations where possible
-
-```
-Action: Query database tool
-      ↓
-Execution:
-  → Connect to SQL Server
-  → Run: SELECT * FROM Sales WHERE Region IS NOT NULL
-  → Return: [{ region: "North", total: 42000 }, ...]
-```
+**Lives in:** `src/Execution/`
 
 ---
 
 ## ⚙️ Operating Principles
 
-These principles govern how WinArchBot reasons and acts at every layer.
+The AI building this project must follow these two rules at all times.
 
-### 1. ✅ Check Existing Tools First
+### 1. ✅ Check Existing Code First
 
-Before creating or invoking anything new, the bot always audits what is already available.
+Before generating any new class, service, or utility, the AI must check if one already exists in the project.
 
-- **Why:** Avoids redundant work, reduces errors, and reuses proven components.
-- **How it works:**
-  - At the Orchestration layer, before planning a solution, the bot queries its tool registry.
-  - If a capable tool already exists (e.g., a file reader, a DB connector, a report renderer), it is reused.
-  - New tools are only created when no existing tool covers the need.
-
-```
-❌ Bad: "I'll write a new SQL query tool for this."
-✅ Good: "A SQL query tool already exists → reusing it with new parameters."
-```
-
----
+- Reuse existing components whenever possible
+- Extend existing classes rather than duplicating logic
+- Only create something new when nothing fits
 
 ### 2. 🔁 Self-Correct When Something Breaks
 
-WinArchBot does not fail silently. When an error occurs at any layer, it diagnoses, adjusts, and retries autonomously.
+If a generated piece of code causes an error, the AI must:
 
-- **Why:** Windows application environments are complex — APIs change, resources fail, inputs are unpredictable.
-- **How it works:**
-  - The Orchestration layer monitors execution results for error signals.
-  - On failure, it identifies the root cause (wrong tool, bad input, unavailable resource).
-  - It adjusts the plan and retries with a corrected approach.
-  - After a configurable number of retries, it escalates to the user with a clear explanation.
+1. Identify the root cause
+2. Fix the issue without discarding working code
+3. Verify the fix before moving on
+4. Never leave broken code in place and move on silently
+
+---
+
+## 📁 Expected Project Structure
+
+When initializing the project, the AI must create the following folder structure:
 
 ```
-Step 3 → Chart render tool FAILED (null data returned)
-      ↓
-Self-correction:
-  → Re-check Step 2 output → empty result set detected
-  → Retry Step 1 with broader date range
-  → Proceed with corrected data
+MyWindowsApp/
+├── src/
+│   ├── Directive/          # Layer 1 — Intent & input handling
+│   ├── Orchestration/      # Layer 2 — Planning & decision logic
+│   └── Execution/          # Layer 3 — Tools, APIs, system calls
+├── tests/
+│   ├── Directive.Tests/
+│   ├── Orchestration.Tests/
+│   └── Execution.Tests/
+├── docs/
+└── README.md               # This file
 ```
 
 ---
 
-## 🛠️ Tech Stack (Windows Application)
+## 🛠️ Tech Stack
 
-| Component         | Technology                          |
-|-------------------|-------------------------------------|
-| UI Layer          | WPF / WinUI 3 / WinForms            |
-| AI Backbone       | Claude API (claude-sonnet-4)        |
-| Orchestration     | Custom C# Agent Loop                |
-| Execution Tools   | .NET 8, Win32 API, SQL Server, REST |
-| Logging           | Serilog + Windows Event Log         |
-| Config Management | appsettings.json + Environment Vars |
+| Concern                  | Technology                  |
+|--------------------------|-----------------------------|
+| UI Framework             | WPF / WinUI 3 / WinForms    |
+| Language                 | C# / .NET 8                 |
+| Database                 | SQL Server / SQLite          |
+| Logging                  | Serilog                      |
+| Dependency Injection     | Microsoft.Extensions.DI     |
+| Testing                  | xUnit + Moq                 |
 
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Windows 10/11
-- .NET 8 SDK
-- Visual Studio 2022+
-- Anthropic API Key
-
-### Installation
-
-```bash
-git clone https://github.com/your-org/winarchbot.git
-cd winarchbot
-dotnet restore
-```
-
-### Configuration
-
-```json
-// appsettings.json
-{
-  "Anthropic": {
-    "ApiKey": "YOUR_API_KEY",
-    "Model": "claude-sonnet-4-20250514"
-  },
-  "Bot": {
-    "MaxRetries": 3,
-    "ToolRegistryPath": "./tools"
-  }
-}
-```
-
-### Run
-
-```bash
-dotnet run --project WinArchBot.App
-```
+> The AI may suggest alternatives if a better fit exists, but must explain why.
 
 ---
 
-## 📁 Project Structure
+## 📋 Instructions for the AI
 
-```
-WinArchBot/
-├── Layer1_Directive/
-│   ├── IntentParser.cs
-│   ├── GoalDecomposer.cs
-│   └── InputValidator.cs
-├── Layer2_Orchestration/
-│   ├── Planner.cs
-│   ├── ToolRouter.cs
-│   ├── ErrorRecovery.cs
-│   └── StateManager.cs
-├── Layer3_Execution/
-│   ├── Tools/
-│   │   ├── DatabaseTool.cs
-│   │   ├── FileSystemTool.cs
-│   │   └── ReportTool.cs
-│   ├── Executor.cs
-│   └── ResultFormatter.cs
-├── Shared/
-│   ├── Models/
-│   └── Logging/
-└── WinArchBot.App/
-    └── MainWindow.xaml
-```
+When given this README, the AI must:
+
+1. **Read this entire file first** before writing any code
+2. **Scaffold the project structure** as defined above
+3. **Respect layer boundaries** — no cross-layer logic shortcuts
+4. **Follow the two Operating Principles** throughout the entire build
+5. **Ask for clarification** if the feature request is ambiguous before implementing it
 
 ---
 
 ## 📜 License
 
-This project is **free to use** — no restrictions, no cost, no attribution required.
-Feel free to use, modify, and distribute it for any purpose, personal or commercial.
-
----
-
-## 🤝 Contributing
-
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
----
-
-*Built with the 3-Layer Architecture pattern for robust, maintainable Windows AI applications.*
+Free to use — no restrictions, no cost, no attribution required.
+Use, modify, and distribute freely for any purpose, personal or commercial.
