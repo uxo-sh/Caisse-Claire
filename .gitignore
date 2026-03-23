@@ -50,6 +50,7 @@ project.lock.json
 # VS Code
 .vscode/
 
+
 # Windows
 Thumbs.db
 ehthumbs.db
@@ -63,3 +64,6 @@ $RECYCLE.BIN/
 appsettings.Development.json
 appsettings.Local.json
 secrets.json
+
+#executable
+out/

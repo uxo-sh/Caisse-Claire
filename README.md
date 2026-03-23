@@ -1,154 +1,61 @@
-# Windows Application — Project Blueprint
+# Caisse Claire - Point of Sale (POS) Application
 
-> **How to use this file:** Hand this README to any AI chatbot (Claude, ChatGPT, Copilot, etc.) and ask it to initialize the project. The AI will use this document as its source of truth for architecture decisions, folder structure, and coding rules.
+Welcome to **Caisse Claire**, a modern, lightweight, and robust Point of Sale (POS) system built on the .NET 10 WPF framework. This desktop application is specifically designed to manage store transactions, cart calculation, catalog configuration, and PDF reporting.
 
----
-
-## 🎯 Project Goal
-
-Build a **Windows desktop application** following a strict 3-layer architecture. Every feature, module, and file must respect the layer boundaries described below.
+![Caisse Claire Architecture](docs/architecture.md) _(Conceptual)_
 
 ---
 
-## 🏗️ 3-Layer Architecture
+## 🌟 Key Features
 
-The application is organized into 3 layers. Each layer has one responsibility. Layers only communicate downward — upper layers call lower layers, never the reverse.
+### 🛒 High-Performance Cart Management
+- Easily ring up products using quick 3-digit access codes.
+- Add "Custom/Unknown Items" instantly to accommodate dynamic pricing on-the-fly.
+- **Accurate Math:** Automatically calculates total prices and provides the exact "Change to Return" based on the cash given by the client.
+- **Cart Editing:** Misclicked an item? Simply select it and remove it securely before checkout.
 
-```
-┌─────────────────────────────────────────────────────┐
-│                     USER INPUT                       │
-└──────────────────────┬──────────────────────────────┘
-                       │
-          ┌────────────▼────────────┐
-          │   LAYER 1 — DIRECTIVE   │
-          │      "What to do"       │
-          └────────────┬────────────┘
-                       │
-          ┌────────────▼────────────┐
-          │ LAYER 2 — ORCHESTRATION │
-          │       "Decisions"       │
-          └────────────┬────────────┘
-                       │
-          ┌────────────▼────────────┐
-          │   LAYER 3 — EXECUTION   │
-          │    "Doing the work"     │
-          └─────────────────────────┘
-```
+### 📦 Built-In Catalog Manager
+- Launch the **Product Catalog** from the main UI to overview your entire inventory.
+- **Add / Remove:** Update stock logic directly through the UI. It safely saves any changes to the `data/products.csv` database.
+- **Soft Deletions:** Products marked for deletion turn red to visually warn you before permanent removal.
+- **Intuitive Visual Reordering:** Easily organize and sequence your catalog the way you want using drag-and-drop mechanics. 
+
+### 📄 Professional Exporting
+- Utilize our lightning-fast 1-click **Export to PDF**! The catalog transforms perfectly into a well-formatted A4 `CatalogExport.pdf` file instantly.
+
+### ⚙️ User Accessibility & Settings Configuration
+- **Dark Mode Support:** Switch effortlessly between Light and Dark themes to match your ambient store lighting.
+- **Bilingual Capabilities:** Application supports both `English` and `Français` via dynamic real-time resource dictionary swapping.
+- **Visual Scaling:** Text too small? Use the font scaling slider to increase readability up to 150%.
+- Preferences are strictly remembered across sessions within `data/settings.json`.
 
 ---
 
-### Layer 1 — Directive *(What to do)*
+## 🛠️ Technology Stack
+This project follows a strict **3-Layer Architecture** separating Intent, Decision Making, and System Calls:
 
-**Role:** Capture the user's intent and translate it into a clear, structured instruction.
-
-- Receives raw input from the UI (button clicks, form submissions, commands)
-- Validates and interprets what the user wants
-- Produces a structured goal/command object
-- Passes it down to the Orchestration layer
-- **Does NOT make decisions. Does NOT execute anything.**
-
-**Lives in:** `src/Directive/`
-
----
-
-### Layer 2 — Orchestration *(Decisions)*
-
-**Role:** Receive the structured goal and decide how to achieve it.
-
-- Breaks the goal into steps
-- Chooses which services, tools, or handlers to call
-- Manages the sequence and conditions (if/else, retries, branching)
-- Handles errors and fallback strategies
-- **Does NOT touch the UI. Does NOT run low-level operations directly.**
-
-**Lives in:** `src/Orchestration/`
+| Concept | Technology |
+|---|---|
+| **UI Environment** | Windows Presentation Foundation (WPF) |
+| **Language & Runtime** | C# 13 / .NET 10 |
+| **Logic Paradigms** | Orchestrator & Repository Patterns |
+| **Drag & Drop** | Gong-WPF-DragDrop Framework |
+| **PDF Renderer** | QuestPDF Community |
 
 ---
 
-### Layer 3 — Execution *(Doing the work)*
+## 🚀 How to Run
 
-**Role:** Carry out the actual operations — file system, database, APIs, Windows system calls.
+Running Caisse Claire from source is incredibly simple using the .NET CLI.
 
-- Performs all I/O operations (read/write files, query DB, call REST APIs)
-- Interacts with Windows APIs (Win32, .NET runtime, registry, processes)
-- Returns results back up to the Orchestration layer
-- **Does NOT interpret intent. Does NOT make decisions.**
-
-**Lives in:** `src/Execution/`
-
----
-
-## ⚙️ Operating Principles
-
-The AI building this project must follow these two rules at all times.
-
-### 1. ✅ Check Existing Code First
-
-Before generating any new class, service, or utility, the AI must check if one already exists in the project.
-
-- Reuse existing components whenever possible
-- Extend existing classes rather than duplicating logic
-- Only create something new when nothing fits
-
-### 2. 🔁 Self-Correct When Something Breaks
-
-If a generated piece of code causes an error, the AI must:
-
-1. Identify the root cause
-2. Fix the issue without discarding working code
-3. Verify the fix before moving on
-4. Never leave broken code in place and move on silently
-
----
-
-## 📁 Expected Project Structure
-
-When initializing the project, the AI must create the following folder structure:
-
-```
-MyWindowsApp/
-├── src/
-│   ├── Directive/          # Layer 1 — Intent & input handling
-│   ├── Orchestration/      # Layer 2 — Planning & decision logic
-│   └── Execution/          # Layer 3 — Tools, APIs, system calls
-├── tests/
-│   ├── Directive.Tests/
-│   ├── Orchestration.Tests/
-│   └── Execution.Tests/
-├── docs/
-└── README.md               # This file
+1. Ensure the `.NET 10 SDK` represents your default developer environment.
+2. Open a terminal at the very root of this project (next to `CaisseClaire.slnx`).
+3. Run the following command:
+```powershell
+dotnet run --project src\Directive\CaisseClaire.Directive.csproj
 ```
 
----
+**Why from the root?**
+Running strictly from the root properly informs the `Execution` layer to correctly resolve `data/products.csv` and `data/settings.json`.
 
-## 🛠️ Tech Stack
-
-| Concern                  | Technology                  |
-|--------------------------|-----------------------------|
-| UI Framework             | WPF / WinUI 3 / WinForms    |
-| Language                 | C# / .NET 8                 |
-| Database                 | SQL Server / SQLite          |
-| Logging                  | Serilog                      |
-| Dependency Injection     | Microsoft.Extensions.DI     |
-| Testing                  | xUnit + Moq                 |
-
-> The AI may suggest alternatives if a better fit exists, but must explain why.
-
----
-
-## 📋 Instructions for the AI
-
-When given this README, the AI must:
-
-1. **Read this entire file first** before writing any code
-2. **Scaffold the project structure** as defined above
-3. **Respect layer boundaries** — no cross-layer logic shortcuts
-4. **Follow the two Operating Principles** throughout the entire build
-5. **Ask for clarification** if the feature request is ambiguous before implementing it
-
----
-
-## 📜 License
-
-Free to use — no restrictions, no cost, no attribution required.
-Use, modify, and distribute freely for any purpose, personal or commercial.
+_Happy selling with Caisse Claire! 💰🎊_
